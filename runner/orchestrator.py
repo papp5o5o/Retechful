@@ -17,8 +17,20 @@ req = urllib.request.Request(url, headers={
     "apikey": SUPABASE_ANON_KEY,
     "Authorization": f"Bearer {SUPABASE_ANON_KEY}"
 })
-with urllib.request.urlopen(req) as resp:
-    test_cases = json.loads(resp.read())
+try:
+    with urllib.request.urlopen(req) as resp:
+        test_cases = json.loads(resp.read())
+except urllib.error.HTTPError as e:
+    error_body = e.read().decode()
+    print(f"Supabase error ({e.code}): {error_body}")
+    os.makedirs("results", exist_ok=True)
+    with open(f"results/{SUBMISSION_ID}.json", "w") as f:
+        json.dump({
+            "submission_id": SUBMISSION_ID,
+            "status": "ERROR",
+            "message": f"Supabase error: {error_body}"
+        }, f, ensure_ascii=False)
+    sys.exit(0)
 
 os.makedirs("results", exist_ok=True)
 
