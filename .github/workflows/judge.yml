@@ -1,0 +1,16 @@
+name: Hello World
+
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: '表示するメッセージ'
+        required: false
+        default: 'hello'
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run a simple docker container
+        run: docker run --rm hello-world
