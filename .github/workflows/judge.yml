@@ -1,0 +1,21 @@
+name: Judge
+
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: 'テスト用メッセージ'
+        required: false
+        default: 'hello'
+
+jobs:
+  judge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build judge image
+        run: docker build -t judge-cpp ./docker/cpp
+
+      - name: Run judge container
+        run: docker run --rm judge-cpp
