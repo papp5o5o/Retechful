@@ -1,16 +1,21 @@
-name: Hello World
+name: Judge
 
 on:
   workflow_dispatch:
     inputs:
       message:
-        description: '表示するメッセージ'
+        description: 'テスト用メッセージ'
         required: false
         default: 'hello'
 
 jobs:
-  hello:
+  judge:
     runs-on: ubuntu-latest
     steps:
-      - name: Run a simple docker container
-        run: docker run --rm hello-world
+      - uses: actions/checkout@v4
+
+      - name: Build judge image
+        run: docker build -t judge-cpp ./docker/cpp
+
+      - name: Run judge container
+        run: docker run --rm judge-cpp
