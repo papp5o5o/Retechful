@@ -3,10 +3,17 @@ name: Judge
 on:
   workflow_dispatch:
     inputs:
-      message:
-        description: 'テスト用メッセージ'
-        required: false
-        default: 'hello'
+      submission_id:
+        required: true
+      problem_id:
+        required: true
+      language:
+        required: true
+      code_b64:
+        required: true
+
+permissions:
+  contents: write
 
 jobs:
   judge:
@@ -14,8 +21,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build judge image
-        run: docker build -t judge-cpp ./docker/cpp
+      - name: Run judge
+        env:
+          SUBMISSION_ID: ${{ github.event.inputs.submission_id }}
+          PROBLEM_ID: ${{ github.event.inputs.problem_id }}
+          CODE_B64: ${{ github.event.inputs.code_b64 }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: python3 runner/orchestrator.py
 
-      - name: Run judge container
-        run: docker run --rm judge-cpp
+      - name: Commit result
+        run: |
+          git config user.name "judge-bot"
+          git config user.email "judge-bot@users.noreply.github.com"
+          git add results/
+          git commit -m "result: ${{ github.event.inputs.submission_id }}" || echo "nothing to commit"
+          git push
