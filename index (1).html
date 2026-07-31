@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Retechful Judge</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --panel: #161b22;
+    --border: #30363d;
+    --text: #c9d1d9;
+    --text-dim: #8b949e;
+    --accent: #58a6ff;
+    --ac: #3fb950;
+    --wa: #f85149;
+    --pending: #d29922;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "SFMono-Regular", "JetBrains Mono", Consolas, Menlo, monospace;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+  }
+
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 20px 24px;
+  }
+
+  header .prompt {
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+
+  header h1 {
+    margin: 4px 0 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  header h1::before {
+    content: "> ";
+    color: var(--accent);
+  }
+
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px;
+    display: grid;
+    gap: 20px;
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px;
+  }
+
+  .panel h2 {
+    margin: 0 0 12px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-dim);
+    font-weight: 600;
+  }
+
+  #problem-statement {
+    font-size: 14px;
+    white-space: pre-wrap;
+  }
+
+  .controls-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  select {
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 8px 10px;
+    font-family: inherit;
+    font-size: 13px;
+  }
+
+  select option:disabled {
+    color: var(--text-dim);
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 320px;
+    background: #010409;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 14px;
+    font-family: inherit;
+    font-size: 13px;
+    resize: vertical;
+    tab-size: 4;
+  }
+
+  textarea:focus, select:focus, button:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  button {
+    background: var(--accent);
+    color: #0d1117;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 12px;
+  }
+
+  button:disabled {
+    background: var(--border);
+    color: var(--text-dim);
+    cursor: not-allowed;
+  }
+
+  #status-line {
+    margin-top: 16px;
+    font-size: 14px;
+    display: none;
+  }
+
+  #status-line.show { display: block; }
+
+  .verdict {
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .verdict.AC { background: rgba(63,185,80,0.15); color: var(--ac); }
+  .verdict.WA { background: rgba(248,81,73,0.15); color: var(--wa); }
+  .verdict.RE, .verdict.CE, .verdict.ERROR { background: rgba(248,81,73,0.15); color: var(--wa); }
+  .verdict.PENDING { background: rgba(210,153,34,0.15); color: var(--pending); }
+
+  #case-list {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  #case-list div { padding: 2px 0; }
+
+  footer {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 12px;
+    padding: 20px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="prompt">retechful judge</div>
+  <h1>problem_001</h1>
+</header>
+
+<main>
+  <div class="panel">
+    <h2>Problem</h2>
+    <!-- ここに問題文を書き換えてください -->
+    <div id="problem-statement">整数 A, B が与えられます。A + B を出力してください。
+
+入力
+A B
+
+出力
+A + B の値を1行で出力</div>
+  </div>
+
+  <div class="panel">
+    <h2>Submit</h2>
+    <div class="controls-row">
+      <label for="language">言語:</label>
+      <select id="language">
+        <option value="cpp">C++</option>
+        <option value="python" disabled>Python (準備中)</option>
+        <option value="java" disabled>Java (準備中)</option>
+      </select>
+    </div>
+
+    <textarea id="code" spellcheck="false" placeholder="ここにコードを書いてください">#include &lt;iostream&gt;
+int main() {
+    int a, b;
+    std::cin &gt;&gt; a &gt;&gt; b;
+    std::cout &lt;&lt; (a + b) &lt;&lt; std::endl;
+    return 0;
+}</textarea>
+
+    <button id="submit-btn">提出する</button>
+
+    <div id="status-line">
+      <span id="verdict" class="verdict PENDING">-</span>
+      <span id="status-text"></span>
+      <div id="case-list"></div>
+    </div>
+  </div>
+</main>
+
+<footer>judge runs on GitHub Actions / Docker</footer>
+
+<script>
+  // ==================== 設定(ここを書き換えてください) ====================
+  const WORKER_URL = "https://YOUR-WORKER-NAME.YOUR-SUBDOMAIN.workers.dev/submit";
+  const GITHUB_OWNER = "papp5o5o";
+  const GITHUB_REPO = "Retechful";
+  const PROBLEM_ID = "1"; // Supabaseのtest_caseテーブルのproblem_idと合わせる
+  const POLL_INTERVAL_MS = 3000;
+  const POLL_MAX_TRIES = 40; // 40 * 3秒 = 最大2分待つ
+  // ========================================================================
+
+  const submitBtn = document.getElementById("submit-btn");
+  const statusLine = document.getElementById("status-line");
+  const verdictEl = document.getElementById("verdict");
+  const statusText = document.getElementById("status-text");
+  const caseList = document.getElementById("case-list");
+  const languageSelect = document.getElementById("language");
+  const codeArea = document.getElementById("code");
+
+  function setVerdict(v, text) {
+    verdictEl.textContent = v;
+    verdictEl.className = "verdict " + v;
+    statusText.textContent = text || "";
+    statusLine.classList.add("show");
+  }
+
+  function renderCases(cases) {
+    caseList.innerHTML = "";
+    if (!cases) return;
+    cases.forEach(c => {
+      const div = document.createElement("div");
+      const time = c.cpu_time_sec != null ? ` (${c.cpu_time_sec}s)` : "";
+      div.textContent = `case ${c.case}: ${c.verdict}${time}`;
+      caseList.appendChild(div);
+    });
+  }
+
+  async function pollResult(submissionId) {
+    const url = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/main/results/${submissionId}.json?t=${Date.now()}`;
+    for (let i = 0; i < POLL_MAX_TRIES; i++) {
+      await new Promise(r => setTimeout(r, POLL_INTERVAL_MS));
+      try {
+        const res = await fetch(url, { cache: "no-store" });
+        if (res.ok) {
+          const data = await res.json();
+          setVerdict(data.status, data.message || "");
+          renderCases(data.cases);
+          return;
+        }
+      } catch (e) {
+        // まだ結果が無い、無視して次のポーリングへ
+      }
+      setVerdict("PENDING", `採点中... (${i + 1}/${POLL_MAX_TRIES})`);
+    }
+    setVerdict("PENDING", "タイムアウトしました。時間を置いて再度確認してください。");
+  }
+
+  submitBtn.addEventListener("click", async () => {
+    const code = codeArea.value;
+    const language = languageSelect.value;
+
+    if (!code.trim()) {
+      alert("コードを入力してください");
+      return;
+    }
+
+    submitBtn.disabled = true;
+    setVerdict("PENDING", "送信中...");
+    renderCases(null);
+
+    try {
+      const res = await fetch(WORKER_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ problem_id: PROBLEM_ID, language, code })
+      });
+
+      if (!res.ok) {
+        const errText = await res.text();
+        setVerdict("ERROR", "提出に失敗しました: " + errText);
+        submitBtn.disabled = false;
+        return;
+      }
+
+      const data = await res.json();
+      setVerdict("PENDING", "採点中です...");
+      await pollResult(data.submission_id);
+    } catch (e) {
+      setVerdict("ERROR", "通信エラー: " + e.message);
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+</script>
+
+</body>
+</html>
